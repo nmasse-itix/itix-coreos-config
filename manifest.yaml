@@ -1,0 +1,8 @@
+ref: itix/${basearch}/coreos/stable
+include: fedora-coreos-config/manifest.yaml
+
+packages:
+- hdparm
+
+repos:
+- fedora
