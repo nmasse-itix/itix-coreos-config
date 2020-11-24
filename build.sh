@@ -66,6 +66,9 @@ fi
 export COREOS_ASSEMBLER_CONFIG_GIT="$git"
 cosa fetch
 cosa build
+cosa buildextend-metal
+cosa buildextend-metal4k # metal4k is needed to generate the livecd
+cosa buildextend-live
 
 message "Extracting generated ostree..."
 rm -rf "$build_repo" || exit 1

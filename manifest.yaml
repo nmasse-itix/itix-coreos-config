@@ -6,3 +6,10 @@ packages:
 
 repos:
 - fedora
+
+postprocess:
+  # remove the "fedora" ostree remote
+  - |
+    #!/usr/bin/env bash
+    set -xeuo pipefail
+    rm /etc/ostree/remotes.d/fedora.conf
