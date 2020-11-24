@@ -6,7 +6,7 @@ repo="$output/ostree-repo"
 build_repo="$output/ostree-build-repo"
 git="$PWD"
 # Set the corresponding backend using "rclone config"
-s3_bucket="backblaze:itix-ostree"
+s3_bucket="backblaze:itix-coreos"
 
 function message() {
   echo
@@ -87,4 +87,18 @@ message "Generating static delta files (though it may fail if there is no parent
 ostree --repo="$repo" static-delta generate itix/x86_64/coreos/stable
 
 message "Mirroring the repository to Backblaze B2..."
-rclone sync -P "$repo" "$s3_bucket"
+rclone sync -P "$repo" "$s3_bucket/ostree/" || exit 1
+
+message "Copying the ISO image to Backblaze B2..."
+rclone copy -P "$target"/builds/latest/x86_64/fedora-coreos-*.x86_64.iso "$s3_bucket/iso/itix-coreos.x86_64.iso" || exit 1
+
+if [ -d "$git"/ignition/ ]; then
+  message "Generating and uploading the Ignition files..."
+  for fcc in "$git"/ignition/*.fcc; do
+    dir="$(dirname "$fcc")"
+    basename="$(basename "$fcc" .fcc)"
+    echo "- $basename"
+    fcct "$fcc" -o "$dir/$basename.ign" || exit 1
+    rclone copy "$dir/$basename.ign" "$s3_bucket/ignition/$basename.ign" || exit 1
+  done
+fi

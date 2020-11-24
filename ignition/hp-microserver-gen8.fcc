@@ -1,0 +1,28 @@
+variant: fcos
+version: 1.1.0
+storage:
+  disks:
+  - device: /dev/sda
+    # We do not want to wipe the partition table since this is the primary
+    # device.
+    wipe_table: false
+    partitions:
+    - size_mib: 0
+      # Start at 50G so that we leave enough space for the root partition.
+      start_mib: 50000
+      label: var
+  filesystems:
+    - path: /var
+      device: /dev/disk/by-partlabel/var
+      format: xfs
+      with_mount_unit: true
+passwd:
+  users:
+    - name: nicolas
+      groups:
+        - wheel
+        - sudo
+      ssh_authorized_keys:
+      - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDK64XJZJIVf0G7lbPrVbe/ll39O1HNcMnkxbJCJ+k4aND/yiyYcUGBpjtYsfkX7ms2jVNFZ5S59tqeddqd2nzeL8R1vcC/CKxFhbCRL6mWkx3ANcsUhgFmdvjemCwcsDwAQQynh+MhhoCpFCU41mM0T9jT2TfuZx1Zt1ATNJeZ3epOfYvYntefu5LsLQ/8W2XDMtoCvgMLCWyiPZKqdpcOZKKDwB/Vat01T9oDV9h8B/SCA7YTm0Y4nJJnnJ3L+Bpt9R9nbjMZc0fe7EIyybbS7T+cleQ35L0oEaGN/sgrzlD+S4yXKFEof4Rv8d5wR1JBKHF+/VHpRMSJNB1VWpL5 nicolas@Mobilix.local"
+      # mkpasswd --method=yescrypt -s
+      password_hash: "$y$j9T$/cDRIBoeLOxNIbNykbclK.$1ZiK7FC.vl5r4Bo3bgXYABAjpzFkDhD.agBA73/dnU0"
